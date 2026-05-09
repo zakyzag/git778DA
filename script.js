@@ -1,0 +1,229 @@
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(section => {
+    section.classList.remove('active');
+  });
+
+  document.getElementById(id).classList.add('active');
+}
+
+// =====================
+// DATA PELANGGAN
+// =====================
+
+const pelangganForm = document.getElementById('pelangganForm');
+const pelangganTable = document.getElementById('pelangganTable');
+
+pelangganForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const data = {
+    nama: nama.value,
+    alamat: alamat.value,
+    paket: paket.value
+  };
+
+  await db.collection('pelanggan').add(data);
+  pelangganForm.reset();
+});
+
+async function loadPelanggan() {
+  pelangganTable.innerHTML = '';
+
+  const snapshot = await db.collection('pelanggan').get();
+
+  document.getElementById('totalPelanggan').innerText = snapshot.size;
+
+  snapshot.forEach(doc => {
+    const d = doc.data();
+
+    pelangganTable.innerHTML += `
+      <tr>
+        <td>${d.nama}</td>
+        <td>${d.alamat}</td>
+        <td>${d.paket}</td>
+      </tr>
+    `;
+  });
+}
+
+// =====================
+// DATA ODP
+// =====================
+
+const odpForm = document.getElementById('odpForm');
+const odpTable = document.getElementById('odpTable');
+
+odpForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const data = {
+    nama: namaOdp.value,
+    core: core.value,
+    status: status.value
+  };
+
+  await db.collection('odp').add(data);
+  odpForm.reset();
+});
+
+async function loadODP() {
+  odpTable.innerHTML = '';
+
+  const snapshot = await db.collection('odp').get();
+
+  document.getElementById('totalODP').innerText = snapshot.size;
+
+  snapshot.forEach(doc => {
+    const d = doc.data();
+
+    odpTable.innerHTML += `
+      <tr>
+        <td>${d.nama}</td>
+        <td>${d.core}</td>
+        <td>${d.status}</td>
+      </tr>
+    `;
+  });
+}
+
+// =====================
+// GANGGUAN
+// =====================
+
+const gangguanForm = document.getElementById('gangguanForm');
+const gangguanTable = document.getElementById('gangguanTable');
+
+ gangguanForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const data = {
+    lokasi: lokasiGangguan.value,
+    jenis: jenisGangguan.value
+  };
+
+  await db.collection('gangguan').add(data);
+  gangguanForm.reset();
+});
+
+async function loadGangguan() {
+  gangguanTable.innerHTML = '';
+
+  const snapshot = await db.collection('gangguan').get();
+
+  document.getElementById('totalGangguan').innerText = snapshot.size;
+
+  snapshot.forEach(doc => {
+    const d = doc.data();
+
+    gangguanTable.innerHTML += `
+      <tr>
+        <td>${d.lokasi}</td>
+        <td>${d.jenis}</td>
+      </tr>
+    `;
+  });
+}
+
+// =====================
+// TEKNISI
+// =====================
+
+const teknisiForm = document.getElementById('teknisiForm');
+const teknisiTable = document.getElementById('teknisiTable');
+
+teknisiForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const data = {
+    nama: namaTeknisi.value,
+    pekerjaan: jobTeknisi.value
+  };
+
+  await db.collection('teknisi').add(data);
+  teknisiForm.reset();
+});
+
+async function loadTeknisi() {
+  teknisiTable.innerHTML = '';
+
+  const snapshot = await db.collection('teknisi').get();
+
+  snapshot.forEach(doc => {
+    const d = doc.data();
+
+    teknisiTable.innerHTML += `
+      <tr>
+        <td>${d.nama}</td>
+        <td>${d.pekerjaan}</td>
+      </tr>
+    `;
+  });
+}
+
+// =====================
+// DATA JALUR FTTH
+// =====================
+
+const jalurForm = document.getElementById('jalurForm');
+const jalurTable = document.getElementById('jalurTable');
+
+jalurForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+
+  const data = {
+    namaJalur: namaJalur.value,
+    warnaCore: warnaCore.value,
+    odp: odpJalur.value,
+    pot: potJalur.value,
+    teknisi: teknisiJalur.value,
+    status: statusJalur.value
+  };
+
+  await db.collection('jalur').add(data);
+  jalurForm.reset();
+  loadJalur();
+});
+
+async function loadJalur(){
+  jalurTable.innerHTML='';
+
+  const snapshot = await db.collection('jalur').get();
+
+  let no = 1;
+
+  snapshot.forEach(doc=>{
+    const d = doc.data();
+
+    let statusClass = '';
+
+    if(d.status === 'Active'){
+      statusClass = 'status-active';
+    }else if(d.status === 'Maintenance'){
+      statusClass = 'status-maintenance';
+    }else{
+      statusClass = 'status-putus';
+    }
+
+    jalurTable.innerHTML += `
+      <tr>
+        <td>${no++}</td>
+        <td>${d.namaJalur}</td>
+        <td>${d.warnaCore}</td>
+        <td>${d.odp}</td>
+        <td>${d.pot}</td>
+        <td>${d.teknisi}</td>
+        <td><span class="${statusClass}">${d.status}</span></td>
+      </tr>
+    `;
+  });
+}
+
+// =====================
+// LOAD ALL
+// =====================
+
+loadPelanggan();
+loadODP();
+loadGangguan();
+loadTeknisi();
+loadJalur();
